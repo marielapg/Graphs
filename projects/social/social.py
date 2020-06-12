@@ -1,3 +1,6 @@
+import random
+from util import Stack, Queue  
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -45,8 +48,24 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        user_count = 0
+        while user_count < num_users:
+            self.add_user(f"User_{self.last_id + 1}")
+            user_count += 1
 
         # Create friendships
+        num_friends = num_users * avg_friendships
+        friend_count = 0
+        while friend_count < num_friends:
+            friend_id, friend = random.choice(list(self.friendships.items()))
+            user_id, user = random.choice(list(self.users.items()))
+            while friend_id == user_id:
+                user_id, user = random.choice(list(self.users.items()))
+            while user in friend:
+                user_id, user = random.choice(list(self.users.items()))
+            self.friendships[friend_id].add(user_id)
+            self.friendships[user_id].add(friend_id)
+            friend_count += 2
 
     def get_all_social_paths(self, user_id):
         """
@@ -57,9 +76,52 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
+        # visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
-        return visited
+        # return visited
+
+        def bfs(starting_vertex, destination_vertex):
+            """
+            Return a list containing the shortest path from
+            starting_vertex to destination_vertex in
+            breath-first order.
+            """
+            q = Queue()
+            q.enqueue(starting_vertex)
+            visited = set()
+            path = {}
+            path[starting_vertex] = None
+
+            while q.size() > 0:
+                v = q.dequeue()
+                if v not in visited:
+                    if v == destination_vertex:
+                        shortest_path = []
+                        shortest_path.insert(0, destination_vertex)
+                        curr = path[destination_vertex]
+                        while curr != None:
+                            shortest_path.insert(0, curr)
+                            curr = path[curr]
+                        return shortest_path
+                    visited.add(v)
+                    for next_vert in self.friendships[v]:
+                        if next_vert not in visited:
+                            path[next_vert] = v
+                        q.enqueue(next_vert)
+
+        connections = {}
+
+        for user in self.users:
+            connections[user] = []
+
+        for path in connections:
+            # print("\n")
+            # print(bfs(user_id, path))
+            short = bfs(user_id, path)
+            if short != None:
+                connections[path] = short
+
+        return connections
 
 
 if __name__ == '__main__':
