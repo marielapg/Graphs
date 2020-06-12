@@ -33,6 +33,7 @@ class Graph:
         """
         if v1 in self.vertices and v2 in self.vertices:
 		    self.vertices[v1].add(v2)
+            
         else:
 			raise IndexError("Vertex does not exist")
 
@@ -54,12 +55,12 @@ class Graph:
 		q.enqueue(starting_vertex_id)
         visited = set()
         while q.size() > 0:
-            v = q.dequeue()
-        if v not in visited:
+            vertex = q.dequeue()
+        if vertex not in visited:
             print(v)
-            visited.add(v)
-            for next_vert in self.get_neighbors(v):
-				q.enqueue(next_vert)
+            visited.add(vertex)
+            for next_vertex in self.get_neighbors(vertex):
+				q.enqueue(next_vertex)
 
     def dft(self, starting_vertex):
         """
@@ -75,7 +76,7 @@ class Graph:
             print(v)
             visited.add(v)
             for next_vert in self.get_neighbors(v):
-				s.push(next_vert)
+			s.push(next_vert)
         return None
 
     def dft_recursive(self, starting_vertex = None):
@@ -102,8 +103,8 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
-         q = Queue()
-		q.enqueue(starting_vertex_id)
+        q = Queue()
+		q.enqueue(starting_vertex)
         visited = set()
         while q.size() > 0:
             v = q.dequeue()
@@ -121,7 +122,7 @@ class Graph:
         depth-first order.
         """
         s = Stack()
-		s.push(starting_vertex_id)
+		s.push(starting_vertex)
         visited = set()
         while s.size() > 0:
             v = s.pop()
@@ -141,7 +142,16 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        if visited is None:
+            visited = set()
+
+        visited.add(starting_vertex, destination_vertex)
+        print(starting_vertex, destination_vertex)
+
+        for neighbor in self.vertices[starting_vertex, destination_vertex]:
+            if neighbor not in visited:
+                self.dfts_recursive(neighbor, visited)
+
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
